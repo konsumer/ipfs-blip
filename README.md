@@ -1,6 +1,6 @@
 # ipfs-blip
 
-An IPFS platform for something like twitter.
+An IPFS-based platform for something like twitter.
 
 
 ## setup
