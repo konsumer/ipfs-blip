@@ -13,8 +13,8 @@ const KeyForm = (props) => {
   const { handleSubmit, submitting, submit } = props
   return (
     <form onSubmit={handleSubmit(submit)}>
-      <Field name='name' component={renderField} label='name' />
-      <Field name='email' type='email' component={renderField} label='email' />
+      <Field name='name' component={renderField} label='Your Name' />
+      <Field name='email' type='email' component={renderField} label='email@example.com' />
       <Field name='password' type='password' component={renderField} label='password' />
       <div>
         <button className='button-primary' type='submit' disabled={submitting}>generate</button>

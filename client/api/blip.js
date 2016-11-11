@@ -1,31 +1,36 @@
 /* global localStorage */
 
-import openpgp, {generateKey, HKP} from 'openpgp'
-openpgp.initWorker({ path: 'openpgp.worker.js' })
-openpgp.config.aead_protect = true
+// import kbpgp from 'kbpgp'
 
-export function reducer (state = {id: JSON.parse(localStorage.id || 'false'), priv: localStorage.priv, pub: localStorage.pub}, action) {
+export function reducer (state = {error: false, userid: localStorage.userid, priv: localStorage.priv, pub: localStorage.pub}, action) {
   switch (action.type) {
+    case 'error':
+      return Object.assign({}, state, {error: action.data})
+    case 'create_key_success':
+      return Object.assign({}, state, {error: false}, action.data)
     case 'create_key':
-      const options = {
-        userIds: [{ name: action.data.name, email: action.data.email }],
-        passphrase: action.data.password,
-        numBits: 4096
+      const userid = `${action.data.name} <${action.data.email}>`
+      const passphrase = action.data.password
+      return dispatch => {
+        // const resolve = data => dispatch({type: 'create_key_success', data})
+        // const reject = err => dispatch({type: 'error', data: err})
+        // kbpgp.KeyManager.generate_rsa({ userid, passphrase }, (err, user) => {
+        //   if (err) return reject(err)
+        //   user.sign({}, err => {
+        //     if (err) return reject(err)
+        //     user.export_pgp_private({ passphrase }, (err, priv) => {
+        //       if (err) return reject(err)
+        //       user.export_pgp_public({}, (err, pub) => {
+        //         if (err) return reject(err)
+        //         localStorage.userid = userid
+        //         localStorage.priv = priv
+        //         localStorage.pub = pub
+        //         resolve({userid, priv, pub})
+        //       })
+        //     })
+        //   })
+        // })
       }
-      return generateKey(options)
-        .then(key => {
-          localStorage.id = JSON.stringify({ name: action.data.name, email: action.data.email })
-          localStorage.priv = key.privateKeyArmored
-          localStorage.pub = key.publicKeyArmored
-          const hkp = new HKP(process.env.HKP_SERVER)
-          hkp.upload(key.publicKeyArmored)
-
-          return Object.assign({}, {
-            priv: key.privateKeyArmored,
-            pub: key.publicKeyArmored,
-            id: { name: action.data.name, email: action.data.email }
-          }, state)
-        })
     default:
       return state
   }

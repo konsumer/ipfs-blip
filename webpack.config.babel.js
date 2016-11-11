@@ -11,7 +11,7 @@ const config = {
       './client/index.js',
       'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000'
     ],
-    vendor: Object.keys(pkg.dependencies).filter(p => !p.match(/^ipfs|babel.+|express.*/))
+    vendor: Object.keys(pkg.dependencies).filter(p => !p.match(/^kbpgp|ipfs|babel.+|express.*/))
   },
   output: {
     path: resolve(__dirname, './pub/build/'),
