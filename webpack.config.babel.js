@@ -1,49 +1,45 @@
-import { DefinePlugin, NoErrorsPlugin, optimize } from 'webpack'
-import { resolve } from 'path'
-const { DedupePlugin, UglifyJsPlugin, OccurrenceOrderPlugin } = optimize
-import ExtractTextPlugin from 'extract-text-webpack-plugin'
+import { join, resolve } from 'path'
+import webpack from 'webpack'
+import pkg from './package.json'
 
-process.env.IPFS_HOST = process.env.IPFS_HOST || 'localhost'
-process.env.IPFS_PORT = process.env.IPFS_PORT || 4001
-
-const exposed = [
-  'NODE_ENV',
-  'IPFS_HOST',
-  'IPFS_PORT'
-]
-const exposedEnvironment = {}
-exposed.forEach(i => { exposedEnvironment[i] = JSON.stringify(process.env[i]) })
+process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
 const config = {
-  devtool: 'cheap-module-eval-source-map',
   entry: {
-    app: [
-      './src/index.js',
-      'webpack/hot/only-dev-server'
-    ]
+    client: [
+      './client/index.js',
+      'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000'
+    ],
+    vendor: Object.keys(pkg.dependencies).filter(p => !p.match(/^ipfs|babel.+|express.*/))
   },
   output: {
-    path: resolve(__dirname, './webroot/build'),
+    path: resolve(__dirname, './pub/build/'),
     publicPath: '/build/',
-    filename: '[name].js'
+    filename: '[name].js',
+    chunkFilename: '[id].js'
   },
   module: {
     loaders: [
-      { test: /\.jsx?$/i, exclude: /(node_modules)/, loader: 'babel' },
-      { test: /\.json$/i, loaders: ['json'] },
-      { test: /\.css$/i, loader: ExtractTextPlugin.extract(['css']) },
-      { test: /\.scss$/i, loader: ExtractTextPlugin.extract(['css', 'sass']) }
+      {
+        test: /\.jsx?$/,
+        loader: 'babel',
+        exclude: /node_modules/
+      }
     ]
   },
   plugins: [
-    new DedupePlugin(),
-    new OccurrenceOrderPlugin(),
-    new DefinePlugin({
-      'process.env': exposedEnvironment
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+      }
     }),
-    new ExtractTextPlugin('style.css'),
-    new NoErrorsPlugin()
+    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
+    new webpack.optimize.OccurenceOrderPlugin()
   ],
+  resolve: {
+    root: [ join(__dirname, 'client') ],
+    extensions: ['', '.js']
+  },
   devServer: {
     historyApiFallback: true,
     inline: true,
@@ -53,19 +49,24 @@ const config = {
     headers: { 'Access-Control-Allow-Origin': '*' },
     noInfo: true,
     quiet: true,
-    hot: true,
     publicPath: '/build' // only trigger webpack-dev on stuff in /build
   },
   stats: {
     colors: true
   },
+  devtool: 'eval',
   noInfo: true,
   quiet: false,
   cache: true
 }
 
 if (process.env.NODE_ENV === 'production') {
-  config.plugins.push(new UglifyJsPlugin({sourceMap: false, output: {comments: false}}))
+  config.plugins.push(new webpack.optimize.DedupePlugin())
+  config.plugins.push(new webpack.optimize.AggressiveMergingPlugin())
+  config.plugins.push(new webpack.optimize.UglifyJsPlugin({ output: {comments: false} }))
+  config.devtool = false
+} else {
+  config.plugins.push(new webpack.HotModuleReplacementPlugin())
 }
 
 export default config

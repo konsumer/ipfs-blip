@@ -1,6 +1,5 @@
+.DS_Store
 node_modules
 *.log
-.env
-webroot/build
-.DS_Store
+pub/build
 .ipfs

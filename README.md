@@ -15,3 +15,5 @@ An IPFS-based platform for something like twitter.
 * accept uploaded files, if sig is valid & under size-limit, post to IPFS
 * make Dockerfile with [npm-on-ipfs](https://github.com/diasdavid/npm-on-ipfs) and ipfs installed, run signed-text to ipfs gateway on same machine
 * Integration with keybase & other identity managers (create larger identity web)
+* if local ipfs is running, upload static files on ipfs, update ipns
+* remove node-ipfs & static from server, use real IPFS
