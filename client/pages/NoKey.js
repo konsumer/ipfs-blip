@@ -1,16 +1,12 @@
 import React from 'react'
-import { connect } from 'react-redux'
+
+import KeyForm from '../components/KeyForm'
 
 const NoKey = () => (
   <div className='NoKey'>
-    NO KEY
+    <p>We don't have your key. You can either drag your private file here, or generate a new one.</p>
+    <KeyForm />
   </div>
 )
 
-const mapStateToProps = (store) => ({
-})
-
-const mapDispatchToProps = (dispatch) => ({
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(NoKey)
+export default NoKey

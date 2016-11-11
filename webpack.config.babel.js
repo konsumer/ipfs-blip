@@ -54,7 +54,7 @@ const config = {
   stats: {
     colors: true
   },
-  devtool: 'eval',
+  devtool: 'cheap-module-eval-source-map',
   noInfo: true,
   quiet: false,
   cache: true
