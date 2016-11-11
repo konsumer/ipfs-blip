@@ -1,9 +1,16 @@
 import React from 'react'
+import { connect } from 'react-redux'
 
-const App = ({children}) => (
+import NoKey from './NoKey'
+
+const App = ({children, blip}) => (
   <div className='App'>
-    {children}
+    {blip.priv ? children : <NoKey />}
   </div>
 )
 
-export default App
+const mapStateToProps = (store) => ({
+  blip: store.blip
+})
+
+export default connect(mapStateToProps)(App)
