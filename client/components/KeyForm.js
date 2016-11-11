@@ -4,18 +4,18 @@ import { connect } from 'react-redux'
 
 const renderField = ({ input, label, type, meta: { touched, error } }) => (
   <div>
-    <input {...input} placeholder={label} type={type} />
+    <input {...input} placeholder={label} type={type || 'text'} />
     {touched && error && <span>{error}</span>}
   </div>
 )
 
 const KeyForm = (props) => {
-  const { error, handleSubmit, submitting, submit } = props
+  const { handleSubmit, submitting, submit } = props
   return (
     <form onSubmit={handleSubmit(submit)}>
-      <Field name='name' type='text' component={renderField} label='name' />
+      <Field name='name' component={renderField} label='name' />
+      <Field name='email' type='email' component={renderField} label='email' />
       <Field name='password' type='password' component={renderField} label='password' />
-      {error && <strong>{error}</strong>}
       <div>
         <button className='button-primary' type='submit' disabled={submitting}>generate</button>
       </div>

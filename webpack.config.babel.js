@@ -3,6 +3,7 @@ import webpack from 'webpack'
 import pkg from './package.json'
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+process.env.HKP_SERVER = process.env.HKP_SERVER || 'https://pgp.mit.edu'
 
 const config = {
   entry: {
@@ -30,7 +31,8 @@ const config = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+        HKP_SERVER: JSON.stringify(process.env.HKP_SERVER)
       }
     }),
     new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
